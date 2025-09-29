@@ -1,0 +1,4 @@
+/home/HwHiAiUser/gp/C_C++/QT/Cloud/build/CMakeFiles/server.dir
+/home/HwHiAiUser/gp/C_C++/QT/Cloud/build/CMakeFiles/client.dir
+/home/HwHiAiUser/gp/C_C++/QT/Cloud/build/CMakeFiles/edit_cache.dir
+/home/HwHiAiUser/gp/C_C++/QT/Cloud/build/CMakeFiles/rebuild_cache.dir

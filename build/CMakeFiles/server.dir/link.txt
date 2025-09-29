@@ -1,0 +1,1 @@
+/usr/bin/cc CMakeFiles/server.dir/src/main.c.o CMakeFiles/server.dir/src/epoll.c.o CMakeFiles/server.dir/src/taskQueue.c.o CMakeFiles/server.dir/src/tcpInit.c.o CMakeFiles/server.dir/src/transFile.c.o CMakeFiles/server.dir/src/worker.c.o -o ../bin/server  -lpthread 
