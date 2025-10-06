@@ -13,4 +13,19 @@
 服务端
 ./ftpserver ../conf/server.conf
 客户端
+./client ip port编写服务器端，服务器端启动，然后启动客户端，通过客户端可以输入以下命令进行服务器上的文件查看：
+1. cd 进入对应目录
+2. ls 列出相应目录文件
+3. puts 将本地文件上传至服务器
+4. gets 文件名 下载服务器文件到本地
+5. remove 删除服务器上文件
+6. pwd 显示目前所在路径
+7. 其他命令可以自己添加（mkdir 等等）
+8. 无效命令不响应
+其中目录相关操作用入栈出栈实现。
+
+启动方法
+服务端
+./ftpserver ../conf/server.conf
+客户端
 ./client ip port
