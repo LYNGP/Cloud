@@ -14,3 +14,5 @@
 ./ftpserver ../conf/server.conf
 客户端
 ./client ip port
+
+Mysql数据库连接方法
