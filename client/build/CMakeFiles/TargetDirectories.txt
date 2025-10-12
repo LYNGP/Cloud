@@ -1,0 +1,3 @@
+/home/HwHiAiUser/gp/netDisk/Cloud/client/build/CMakeFiles/client.dir
+/home/HwHiAiUser/gp/netDisk/Cloud/client/build/CMakeFiles/edit_cache.dir
+/home/HwHiAiUser/gp/netDisk/Cloud/client/build/CMakeFiles/rebuild_cache.dir
