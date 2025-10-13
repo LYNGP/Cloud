@@ -1,29 +1,36 @@
-#include"taskQueue.h"
-int taskQueueInit(taskQueue_t *pqueue){
-    bzero(pqueue,sizeof(taskQueue_t));
+#include "taskQueue.h"
+int taskQueueInit(taskQueue_t *pqueue)
+{
+    bzero(pqueue, sizeof(taskQueue_t));
     // pqueue->pFront =NULL;
     // pqueue->pRear = NULL;
     // pqueue->queueSize = 0;
     return 0;
 }
-int enQueue(taskQueue_t *pqueue,int netfd){
-    node_t* pNew = (node_t*)calloc(1,sizeof(node_t));
+int enQueue(taskQueue_t *pqueue, int netfd)
+{
+    node_t *pNew = (node_t *)calloc(1, sizeof(node_t));
     pNew->netfd = netfd;
-    if(pqueue->queueSize == 0){
+    if (pqueue->queueSize == 0)
+    {
         pqueue->pFront = pNew;
         pqueue->pRear = pNew;
-    }else{
+    }
+    else
+    {
         pqueue->pRear->pNext = pNew;
         pqueue->pRear = pNew;
     }
     ++pqueue->queueSize;
     return 0;
 }
-int deQueue(taskQueue_t *pqueue){
-    node_t* pCur = pqueue->pFront;
+int deQueue(taskQueue_t *pqueue)
+{
+    node_t *pCur = pqueue->pFront;
     pqueue->pFront = pCur->pNext;
-    if(pqueue->queueSize == 1){
-        pqueue->pRear =NULL;
+    if (pqueue->queueSize == 1)
+    {
+        pqueue->pRear = NULL;
     }
     free(pCur);
     --pqueue->queueSize;
