@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "../client"
+  "../client.pdb"
   "CMakeFiles/client.dir/src/business.c.o"
   "CMakeFiles/client.dir/src/business.c.o.d"
   "CMakeFiles/client.dir/src/client.c.o"
@@ -7,8 +9,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/client.dir/src/handleCommand.c.o.d"
   "CMakeFiles/client.dir/src/transMsg.c.o"
   "CMakeFiles/client.dir/src/transMsg.c.o.d"
-  "bin/client"
-  "bin/client.pdb"
 )
 
 # Per-language clean rules from dependency scanning.

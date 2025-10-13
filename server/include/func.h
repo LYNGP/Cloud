@@ -36,8 +36,6 @@
 #include<mysql/mysql.h>
 #include<openssl/sha.h>
 
-
-
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 #define ARGS_CHECK(argc,n){ \
     if(argc != n){          \

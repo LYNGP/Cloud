@@ -10,7 +10,7 @@ file(GLOB_RECURSE SRC_LIST CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.c")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # 3. 可执行文件输出目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # 4. 生成目标
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-format-truncation")

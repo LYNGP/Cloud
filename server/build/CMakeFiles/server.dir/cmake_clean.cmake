@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "../server"
+  "../server.pdb"
   "CMakeFiles/server.dir/src/epoll.c.o"
   "CMakeFiles/server.dir/src/epoll.c.o.d"
   "CMakeFiles/server.dir/src/handleCommand.c.o"
@@ -17,8 +19,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/server.dir/src/transMsg.c.o.d"
   "CMakeFiles/server.dir/src/worker.c.o"
   "CMakeFiles/server.dir/src/worker.c.o.d"
-  "bin/server"
-  "bin/server.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
