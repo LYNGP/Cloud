@@ -12,7 +12,9 @@ int clientbusiness(int sockfd, const char *ip, const char *port)
     {
         int ret = -1;
         char flag;
-        puts("请选择你操作\n1.用户注册，2.用户登录,3.退出");
+        puts("#---------------------------------------#");
+        puts("请选择你操作\n1.用户注册  2.用户登录  3.退出");
+        puts("#---------------------------------------#");
         while (1)
         {
             ret = -1;

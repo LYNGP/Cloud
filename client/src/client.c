@@ -2,7 +2,7 @@
 #include "business.h"
 int main(int argc, char *argv[])
 {
-    // ./client 192.168.30.128 1234
+    // ./client 10.14.118.48 6666
     ARGS_CHECK(argc, 3);
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     ERROR_CHECK(sockfd, -1, "socket");
