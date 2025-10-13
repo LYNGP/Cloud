@@ -1,5 +1,5 @@
 #include"handleCommand.h"
-
+#include <openssl/evp.h>
 int cmdShareInit(cmdShare_t* pCmdShare,int netfd,MYSQL* mysql,char* username){
 
     pCmdShare->netfd = netfd;
@@ -163,10 +163,10 @@ int serverExecCd(cmdShare_t *pCmdShare,const char*dirName){
     char sql[4096] = {0};
     memset(sql,0,sizeof(sql));
     if(strcmp(targetDir,"")==0){
-        sprintf(sql,"select* from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
+        snprintf(sql,sizeof(sql),"select* from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
                 pCmdShare->username);
     }else{
-        sprintf(sql,"select* from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
+        snprintf(sql,sizeof(sql),"select* from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
                 pCmdShare->username,targetDir);
     }
     int qret = mysql_query(pCmdShare->mysql,sql);
@@ -281,10 +281,10 @@ int serverExecLs(cmdShare_t *pCmdShare,char* dirName){
     char sql[4096] = {0};
     memset(sql,0,sizeof(sql));
     if(strcmp(targetDir,"")==0){
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
                 pCmdShare->username);
     }else{
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
                 pCmdShare->username,targetDir);
     }
     /* printf("sql = %s\n",sql); */
@@ -324,7 +324,7 @@ int serverExecLs(cmdShare_t *pCmdShare,char* dirName){
 
     //获取目录中的信息
     memset(sql,0,sizeof(sql));
-    sprintf(sql,"select type,filename,filesize from file where pre_id = %d and tomb = 0;",pId);
+    snprintf(sql,sizeof(sql),"select type,filename,filesize from file where pre_id = %d and tomb = 0;",pId);
     qret = mysql_query(pCmdShare->mysql,sql);
     if(qret!=0){
         fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -345,7 +345,7 @@ int serverExecLs(cmdShare_t *pCmdShare,char* dirName){
             break;
         }
         memset(fileInfo,0,sizeof(fileInfo));
-        sprintf(fileInfo,"%s\t\t%s\t\t\t\t%s",row[0],row[1],row[2]);
+        snprintf(fileInfo,sizeof(fileInfo),"%s\t\t%s\t\t\t\t%s",row[0],row[1],row[2]);
         memset(&train,0,sizeof(train_t));
         train.length = strlen(fileInfo);
         memcpy(train.data,fileInfo,train.length);
@@ -401,11 +401,11 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
     char sql[4096] = {0};
     if(stackDeep==0){
         //如果父目录是根目录
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
                 pCmdShare->username);
     }else{
         //父目录不是根目录
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
                 pCmdShare->username,curWorkDir);
     }
     //printf("%s\n",sql);
@@ -426,7 +426,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
 
     //拼接目标路径
     char targetPath[4096]={0};
-    sprintf(targetPath,"%s/%s",curWorkDir,filename);
+    snprintf(targetPath, sizeof(targetPath), "%s/%s",curWorkDir,filename);
     //printf("targetPath = %s\n",targetPath);
 
     //接受失败信息或者sha1码
@@ -442,7 +442,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
     //printf("sha1sum = %s\n",sha1sum);
 
     //查找数据库中是否存在该文件
-    sprintf(sql,"select id,filesize from file where sha1sum = '%s';",sha1sum);
+    snprintf(sql,sizeof(sql),"select id,filesize from file where sha1sum = '%s';",sha1sum);
     qret = mysql_query(pCmdShare->mysql,sql);
     if(qret!=0){
         fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -472,7 +472,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
         //逻辑秒传(以前逻辑删除过一模一样的文件)
         //
         memset(sql,0,sizeof(sql));     
-        sprintf(sql,"select id from file where username='%s'and path ='%s' and type = 'F'"
+        snprintf(sql,sizeof(sql),"select id from file where username='%s'and path ='%s' and type = 'F'"
                 "and tomb = 1;",
                 pCmdShare->username,targetPath);
         qret = mysql_query(pCmdShare->mysql,sql);
@@ -491,7 +491,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
             MYSQL_ROW row = mysql_fetch_row(res);
             int id = atoi(row[0]);
             memset(sql,0,sizeof(sql));
-            sprintf(sql,"update file set tomb = 0 where id = %d;",id);
+            snprintf(sql,sizeof(sql),"update file set tomb = 0 where id = %d;",id);
             qret = mysql_query(pCmdShare->mysql,sql);
             if(qret!=0){
                 fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -507,7 +507,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
             //不存在以前被删除过一模一样的文件
             //实现秒传
             memset(sql,0,sizeof(sql));     
-            sprintf(sql,"insert into file (filename,username,pre_id,path,type,sha1sum,tomb,filesize) "
+            snprintf(sql,sizeof(sql),"insert into file (filename,username,pre_id,path,type,sha1sum,tomb,filesize) "
                     "values ('%s','%s',%d,'%s','F','%s',0,%ld);",
                     filename,pCmdShare->username,preId,targetPath,sha1sum,filesize);
             //printf("%s\n",sql);
@@ -578,7 +578,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
         //本次接收成功将上传进度发送给客户端
         memset(&train,0,sizeof(train_t));
         char message[1024];
-        sprintf(message,"%6.2lf%%",lastTotal*100.0/filesize);
+        snprintf(message,sizeof(message),"%6.2lf%%",lastTotal*100.0/filesize);
         train.length = strlen(message);
         memcpy(train.data,message,train.length);
         send(pCmdShare->netfd,&train.length,sizeof(train.length),0);
@@ -587,7 +587,7 @@ int serverExecPuts(cmdShare_t* pCmdShare,const char* filename){
     close(fd);
     //将文件信息插入文件表(file)
     memset(sql,0,sizeof(sql));     
-    sprintf(sql,"insert into file (filename,username,pre_id,path,type,sha1sum,tomb,filesize) "
+    snprintf(sql,sizeof(sql),"insert into file (filename,username,pre_id,path,type,sha1sum,tomb,filesize) "
             "values ('%s','%s',%d,'%s','F','%s',0,%ld);",
             filename,pCmdShare->username,preId,targetPath,sha1sum,filesize);
     //printf("%s\n",sql);
@@ -619,12 +619,12 @@ int serverExecGets(cmdShare_t* pCmdShare,const char* filename){
     char curWorkDir[4096]={0};
     char targetPath[4096]={0};
     getCurPath(&pCmdShare->pathStack,curWorkDir);
-    sprintf(targetPath,"%s/%s",curWorkDir,filename);
+    snprintf(targetPath, sizeof(targetPath), "%s/%s",curWorkDir,filename);
     //printf("targetPath = %s\n",targetPath);
 
     //查询是否有目标文件
     char sql[4096]= {0};
-    sprintf(sql,"select sha1sum from file where filename='%s' and"
+    snprintf(sql,sizeof(sql),"select sha1sum from file where filename='%s' and"
             " username='%s'and path='%s' and type ='F' and tomb = 0;",
             filename,pCmdShare->username,targetPath);
     int qret = mysql_query(pCmdShare->mysql,sql);
@@ -711,12 +711,12 @@ int serverExecRm(cmdShare_t* pCmdShare,const char* filename){
     char curWorkDir[4096]={0};
     char targetPath[4096]={0};
     getCurPath(&pCmdShare->pathStack,curWorkDir);
-    sprintf(targetPath,"%s/%s",curWorkDir,filename);
+    snprintf(targetPath, sizeof(targetPath), "%s/%s",curWorkDir,filename);
     //printf("targetPath = %s\n",targetPath);
 
     //查询是否有目标文件
     char sql[4096]= {0};
-    sprintf(sql,"select id from file where filename='%s' and"
+    snprintf(sql,sizeof(sql),"select id from file where filename='%s' and"
             " username='%s'and path='%s' and type ='F' and tomb = 0;",
             filename,pCmdShare->username,targetPath);
     int qret = mysql_query(pCmdShare->mysql,sql);
@@ -744,7 +744,7 @@ int serverExecRm(cmdShare_t* pCmdShare,const char* filename){
     int id = atoi(row[0]);
     //在逻辑上删除此文件
     memset(sql,0,sizeof(sql));
-    sprintf(sql,"update file set tomb = 1 where id = %d;",id);
+    snprintf(sql,sizeof(sql),"update file set tomb = 1 where id = %d;",id);
     qret = mysql_query(pCmdShare->mysql,sql);
     if(qret!=0){
         fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -786,11 +786,11 @@ int serverExecMkdir(cmdShare_t* pCmdShare,const char* dirpath){
     char sql[4096] = {0};
     if(stackDeep==0){
         //如果父目录是根目录
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path is NULL and type = 'D';",
                 pCmdShare->username);
     }else{
         //父目录不是根目录
-        sprintf(sql,"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
+        snprintf(sql,sizeof(sql),"select id from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
                 pCmdShare->username,curWorkDir);
     }
     //printf("%s\n",sql);
@@ -811,9 +811,9 @@ int serverExecMkdir(cmdShare_t* pCmdShare,const char* dirpath){
     //判断该目录是否已经存在
     //拼接得到目标文件的路径
     char targetDir[4096]={0};
-    sprintf(targetDir,"%s/%s",curWorkDir,tempDirname);
+    snprintf(targetDir,sizeof(targetDir),"%s/%s",curWorkDir,tempDirname);
     memset(sql,0,sizeof(sql));
-    sprintf(sql,"select* from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
+    snprintf(sql,sizeof(sql),"select* from file where username = '%s' and tomb = 0 and path = '%s' and type = 'D';",
             pCmdShare->username,targetDir);
     qret = mysql_query(pCmdShare->mysql,sql);
     if(qret!=0){
@@ -839,7 +839,7 @@ int serverExecMkdir(cmdShare_t* pCmdShare,const char* dirpath){
     }
     //查看是否存在逻辑上删除了的一模一样的目录
     memset(sql,0,sizeof(sql));     
-    sprintf(sql,"select id from file where username='%s'and path ='%s' and type = 'D'"
+    snprintf(sql,sizeof(sql),"select id from file where username='%s'and path ='%s' and type = 'D'"
             "and tomb = 1;",
             pCmdShare->username,targetDir);
     qret = mysql_query(pCmdShare->mysql,sql);
@@ -860,7 +860,7 @@ int serverExecMkdir(cmdShare_t* pCmdShare,const char* dirpath){
         MYSQL_ROW row = mysql_fetch_row(res);
         int id = atoi(row[0]);
         memset(sql,0,sizeof(sql));
-        sprintf(sql,"update file set tomb = 0 where id = %d;",id);
+        snprintf(sql,sizeof(sql),"update file set tomb = 0 where id = %d;",id);
         qret = mysql_query(pCmdShare->mysql,sql);
         if(qret!=0){
             fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -876,7 +876,7 @@ int serverExecMkdir(cmdShare_t* pCmdShare,const char* dirpath){
         //不存在逻辑上删除的了的一模一样的目录
         //创建目录
         memset(sql,0,sizeof(sql));
-        sprintf(sql,"insert into file (filename,username,pre_id,path,type,tomb,filesize) values"
+        snprintf(sql,sizeof(sql),"insert into file (filename,username,pre_id,path,type,tomb,filesize) values"
                 " ('%s','%s',%d,'%s','D',0,4096);",
                 tempDirname,pCmdShare->username,preId,targetDir);
         qret = mysql_query(pCmdShare->mysql,sql);
@@ -938,10 +938,10 @@ int serverExecRmdir(cmdShare_t* pCmdShare,const char* dirpath){
     char curWorkDir[4096]={0};
     char targetPath[4096]={0};
     getCurPath(&pCmdShare->pathStack,curWorkDir);
-    sprintf(targetPath,"%s/%s",curWorkDir,dirpath);
+    snprintf(targetPath, sizeof(targetPath), "%s/%s",curWorkDir,dirpath);
     //查询是否有目标文件
     char sql[4096]= {0};
-    sprintf(sql,"select id from file where filename='%s' and"
+    snprintf(sql,sizeof(sql),"select id from file where filename='%s' and"
             " username='%s'and path='%s' and type ='D' and tomb = 0;",
             dirpath,pCmdShare->username,targetPath);
     int qret = mysql_query(pCmdShare->mysql,sql);
@@ -970,7 +970,7 @@ int serverExecRmdir(cmdShare_t* pCmdShare,const char* dirpath){
     //在逻辑上删除此目录
     //删除此目录本身
     memset(sql,0,sizeof(sql));
-    sprintf(sql,"update file set tomb = 1 where id = %d;",id);
+    snprintf(sql,sizeof(sql),"update file set tomb = 1 where id = %d;",id);
     qret = mysql_query(pCmdShare->mysql,sql);
     if(qret!=0){
         fprintf(stderr,"mysql_query:%s\n",mysql_error(pCmdShare->mysql));
@@ -995,7 +995,7 @@ int serverExecRmdir(cmdShare_t* pCmdShare,const char* dirpath){
 int deleteDir(cmdShare_t* pCmdShare,int pId){ // 递归的删除文件夹
     //查看pre_id = pId的目录
     char sql[4096] = {0};
-    sprintf(sql,"select id,type from file where pre_id = %d and tomb = 0;",pId);
+    snprintf(sql,sizeof(sql),"select id,type from file where pre_id = %d and tomb = 0;",pId);
     mysql_query(pCmdShare->mysql,sql);
     MYSQL_RES* res = mysql_store_result(pCmdShare->mysql);
     
@@ -1019,7 +1019,7 @@ int deleteDir(cmdShare_t* pCmdShare,int pId){ // 递归的删除文件夹
        if(memcmp(row[2],"F",strlen(row[2]))==0){
            //是文件,逻辑上删除
            memset(sql,0,sizeof(sql));
-           sprintf(sql,"update file set tomb = 1 where id = %d;",id);
+           snprintf(sql,sizeof(sql),"update file set tomb = 1 where id = %d;",id);
            mysql_query(pCmdShare->mysql,sql);
        }
    }
@@ -1060,32 +1060,102 @@ int getSubpath(const char* pathname,char* subpath){
     return 0;
 }
 
-int generateSha1sum(const char* filename,char* sha1sum,int length){
-    SHA_CTX ctx;
-    SHA1_Init(&ctx);
-    int fd = open(filename,O_RDWR);
+// int generateSha1sum(const char* filename,char* sha1sum,int length){
+//     SHA_CTX ctx;
+//     SHA1_Init(&ctx);
+//     int fd = open(filename,O_RDWR);
+//     char buf[4096];
+//     while(1){
+//         bzero(buf,sizeof(buf));
+//         ssize_t sret = read(fd,buf,sizeof(buf));
+//         if(sret == 0){
+//             break;
+//         }
+//         SHA1_Update(&ctx,buf,sret);
+//     }
+//     unsigned char md[20] = {0};
+//     //md将要存储哈希值的二进制形式
+//     SHA1_Final(md,&ctx);
+//     char sha1[40] = {0};
+//     char tempsha1[40] = {0};
+//     for(int i=0;i<20;++i){
+//         //printf("%02x",md[i]);
+//         bzero(tempsha1,sizeof(tempsha1));
+//         sprintf(tempsha1,"%s%02x",sha1,md[i]);
+//         memcpy(sha1,tempsha1,sizeof(sha1));
+//     }
+//     //printf("\n");
+//     memcpy(sha1sum,sha1,length);
+//     return 0;
+// }
+
+int generateSha1sum(const char* filename, char* sha1sum, int length) {
+    // 使用新的 EVP API 替代已弃用的 SHA1 函数
+    EVP_MD_CTX *ctx = EVP_MD_CTX_new();
+    if (ctx == NULL) {
+        fprintf(stderr, "Failed to create EVP_MD_CTX\n");
+        return -1;
+    }
+    
+    if (EVP_DigestInit_ex(ctx, EVP_sha1(), NULL) != 1) {
+        fprintf(stderr, "Failed to initialize digest\n");
+        EVP_MD_CTX_free(ctx);
+        return -1;
+    }
+    
+    int fd = open(filename, O_RDONLY);  // 改为 O_RDONLY，只读即可
+    if (fd < 0) {
+        fprintf(stderr, "Failed to open file: %s\n", filename);
+        EVP_MD_CTX_free(ctx);
+        return -1;
+    }
+    
     char buf[4096];
-    while(1){
-        bzero(buf,sizeof(buf));
-        ssize_t sret = read(fd,buf,sizeof(buf));
-        if(sret == 0){
-            break;
+    ssize_t sret;
+    
+    while ((sret = read(fd, buf, sizeof(buf))) > 0) {
+        if (EVP_DigestUpdate(ctx, buf, sret) != 1) {
+            fprintf(stderr, "Failed to update digest\n");
+            close(fd);
+            EVP_MD_CTX_free(ctx);
+            return -1;
         }
-        SHA1_Update(&ctx,buf,sret);
     }
-    unsigned char md[20] = {0};
-    //md将要存储哈希值的二进制形式
-    SHA1_Final(md,&ctx);
-    char sha1[40] = {0};
-    char tempsha1[40] = {0};
-    for(int i=0;i<20;++i){
-        //printf("%02x",md[i]);
-        bzero(tempsha1,sizeof(tempsha1));
-        sprintf(tempsha1,"%s%02x",sha1,md[i]);
-        memcpy(sha1,tempsha1,sizeof(sha1));
+    
+    close(fd);
+    
+    if (sret < 0) {
+        fprintf(stderr, "Failed to read file\n");
+        EVP_MD_CTX_free(ctx);
+        return -1;
     }
-    //printf("\n");
-    memcpy(sha1sum,sha1,length);
+    
+    unsigned char md[EVP_MAX_MD_SIZE];
+    unsigned int md_len;
+    
+    if (EVP_DigestFinal_ex(ctx, md, &md_len) != 1) {
+        fprintf(stderr, "Failed to finalize digest\n");
+        EVP_MD_CTX_free(ctx);
+        return -1;
+    }
+    
+    EVP_MD_CTX_free(ctx);
+    
+    // 将二进制哈希值转换为十六进制字符串
+    char sha1[41] = {0};  // SHA1 是 40 个字符 + '\0'
+    
+    for (unsigned int i = 0; i < md_len && i < 20; ++i) {
+        snprintf(sha1 + (i * 2), 3, "%02x", md[i]);  // 修复缓冲区溢出警告
+    }
+    
+    // 安全拷贝到输出缓冲区
+    if (length < 41) {
+        fprintf(stderr, "Output buffer too small, need at least 41 bytes\n");
+        return -1;
+    }
+    
+    strncpy(sha1sum, sha1, length - 1);
+    sha1sum[length - 1] = '\0';  // 确保以 null 结尾
+    
     return 0;
 }
-

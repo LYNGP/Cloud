@@ -58,7 +58,7 @@ int userRegister(int netfd,MYSQL* mysql,char* username){
         //查询该用户名是否存在
         char sql[4096] = {0};
         int usernameExist = 0;
-        sprintf(sql,"select * from user where username = '%s';",username);
+        snprintf(sql,sizeof(sql),"select * from user where username = '%s';",username);
         int qret = mysql_query(mysql,sql);
         if(qret != 0){
             //printf("qret = %d\n",qret);
@@ -125,7 +125,7 @@ int userRegister(int netfd,MYSQL* mysql,char* username){
         //printf("secret = %s\n",secret);
         //将新用户插入用户表
         memset(sql,0,sizeof(sql));
-        sprintf(sql,"insert into user(username,salt,encryted_password,tomb) values ('%s','%s','%s',0);",
+        snprintf(sql,sizeof(sql),"insert into user(username,salt,encryted_password,tomb) values ('%s','%s','%s',0);",
                 username,salt,secret);
         //printf("sql = %s\n",sql);
         qret = mysql_query(mysql,sql);
@@ -140,7 +140,7 @@ int userRegister(int netfd,MYSQL* mysql,char* username){
         }
         //将新用户根目录插入文件表
         memset(sql,0,sizeof(sql));
-        sprintf(sql,"insert into file(username,pre_id,type,tomb) values ('%s',-1,'D',0);",
+        snprintf(sql,sizeof(sql),"insert into file(username,pre_id,type,tomb) values ('%s',-1,'D',0);",
                 username);
         //printf("sql = %s\n",sql);
         qret = mysql_query(mysql,sql);
@@ -179,7 +179,7 @@ int serverPwdAuth(int netfd,MYSQL* mysql,char* username){
         //查询用户名是否存在
         char sql[4096] = {0};
         int usernameExist = 0;
-        sprintf(sql,"select salt,encryted_password from user where username = '%s' and tomb = 0;",username);
+        snprintf(sql,sizeof(sql),"select salt,encryted_password from user where username = '%s' and tomb = 0;",username);
         int qret = mysql_query(mysql,sql);
         if(qret != 0){
             printf("qret = %d\n",qret);

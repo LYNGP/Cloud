@@ -41,7 +41,7 @@ int getCurPath(pathStack_t* pPathStack,char* pwd){
         if(pCur == NULL){
             break;
         }
-        sprintf(tempPath,"/%s%s",pCur->dirName,path);
+        snprintf(tempPath,sizeof(tempPath),"/%s%s",pCur->dirName,path);
         memcpy(path,tempPath,sizeof(tempPath));
         memset(tempPath,0,sizeof(tempPath));
         pCur = pCur->pNext;
