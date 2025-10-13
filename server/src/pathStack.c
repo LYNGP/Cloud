@@ -43,7 +43,7 @@ int getCurPath(pathStack_t *pPathStack, char *pwd)
 {
     pathStackNode_t *pCur = pPathStack->pFront;
     char path[4096] = {0};
-    char tempPath[4096] = {0};
+    char tempPath[8192] = {0};
     while (1)
     {
         if (pCur == NULL)

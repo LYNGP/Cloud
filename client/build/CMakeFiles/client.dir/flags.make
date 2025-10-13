@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/HwHiAiUser/gp/netDisk/Cloud/client/include
 
-C_FLAGS =  -Wno-format-truncation -std=gnu11
+C_FLAGS = -std=gnu11
 

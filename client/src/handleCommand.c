@@ -543,7 +543,7 @@ int clientExecGets(int sockfd, const char *filename)
 
 int getReminder(int sockfd, const char *username, const char *ip, const char *port)
 {
-    char reminder[4096] = {0};
+    char reminder[8192] = {0};
     char pwd[4096] = {0};
 
     clientExecPwd(sockfd, pwd);

@@ -69,7 +69,7 @@
         time(&ttime);                                                                                      \
         struct tm pTm;                                                                                     \
         gmtime_r(&ttime, &pTm);                                                                            \
-        char message[4096] = {0};                                                                          \
+        char message[8192] = {0};                                                                          \
         snprintf(message, sizeof(message), "%s:%s", username, action);                                     \
         syslog(priopity, "Date:%04d.%02d.%02d  Time: %02d:%02d:%02d  File:%s  Function:%s  Line:%d\t%s\n", \
                (1900 + pTm.tm_year), (1 + pTm.tm_mon), (pTm.tm_mday),                                      \

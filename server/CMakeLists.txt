@@ -13,7 +13,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # 4. 生成目标
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-format-truncation")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-format-truncation")
 # 在原有编译选项的基础上，追加 -Wno-format-truncation 选项，告诉编译器不要显示格式化字符串可能被截断的警告。
 add_executable(server ${SRC_LIST})
 
